@@ -1,0 +1,18 @@
+camunda.bpm:
+  admin-user:
+    id: demo
+    password: demo
+    firstName: Demo
+  filter:
+    create: All tasks
+  database.type: postgres
+
+spring.datasource:
+  url: jdbc:postgresql://localhost:5432/c7_16_camunda
+  username: camunda
+  password: camunda
+  driver-class-name: org.postgresql.Driver
+  max-active: 128
+
+
+

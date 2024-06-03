@@ -1,2 +1,6 @@
-# camunda-7-custom-authorization
-Set up a custom authorization
+# Authorization
+
+
+# Other resources
+
+org.camunda.bpm.engine. interface AuthorizationService
