@@ -1,5 +1,6 @@
 package org.camunda.authorization;
 
+import org.camunda.bpm.engine.AuthorizationException;
 import org.camunda.bpm.engine.authorization.Permission;
 import org.camunda.bpm.engine.authorization.Resource;
 import org.camunda.bpm.engine.impl.db.CompositePermissionCheck;
@@ -18,22 +19,36 @@ public class BlueAuthorization extends AuthorizationManager {
   @Value("${camunda.bpm.authorization.readonly:false}")
   public boolean readOnlyAccess;
 
+  @Override
   public void checkAuthorization(CompositePermissionCheck compositePermissionCheck) {
     final Authentication currentAuthentication = getCurrentAuthentication();
     logger.info("checkAuthorization:{} userId{}",compositePermissionCheck, currentAuthentication.getUserId());
   }
 
+  @Override
   public void checkAuthorization(Permission permission, Resource resource, String resourceId) {
-    final Authentication currentAuthentication = getCurrentAuthentication();
-    logger.info("checkAuthorization: Permission{} Resource:{} resourceid{} userId{}",
+    logger.info("checkAuthorization: Permission:[{}] Resource:[{}] resourceId:[{}] userId:[{}]",
         permission.getName(), resource.resourceName(), resourceId,
-        currentAuthentication.getUserId());
+        getCurrentUserId());
+    if (resource.resourceName().equals("Deployment"))
+      throw new AuthorizationException("Can't access deployment");
   }
-  public boolean isAuthorized(Permission permission, Resource resource, String resourceId) {
-    final Authentication currentAuthentication = getCurrentAuthentication();
 
-    logger.info("isAuthorized: Permission{} Resource:{} resourceid{} userId{}", permission.getName(), resource.resourceName(),
-        resourceId, currentAuthentication.getUserId());
+  @Override
+  public boolean isAuthorized(Permission permission, Resource resource, String resourceId) {
+    logger.info("isAuthorized: Permission[{}] Resource:[{}] resourceId:[{}] userId:[{}]", permission.getName(), resource.resourceName(),
+        resourceId, getCurrentUserId());
     return true;
+  }
+
+  /**
+   * Return the current UserId, if there is one for this request.
+   * @return the userId, null if there is not
+   */
+  private String getCurrentUserId() {
+    final Authentication currentAuthentication = getCurrentAuthentication();
+    if (currentAuthentication!=null && currentAuthentication.getUserId()!=null)
+      return currentAuthentication.getUserId();
+    return null;
   }
 }
