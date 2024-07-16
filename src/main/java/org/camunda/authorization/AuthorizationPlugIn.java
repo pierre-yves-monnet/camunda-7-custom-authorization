@@ -26,7 +26,7 @@ public class AuthorizationPlugIn implements ProcessEnginePlugin {
   public void preInit(ProcessEngineConfigurationImpl processEngineConfiguration) {
     logger.info("AuthorizationInit.preInit");
     List<SessionFactory> listSessionFactory= processEngineConfiguration.getCustomSessionFactories();
-    listSessionFactory.add( new ShadowManagerFactory(AuthorizationManager.class, BlueAuthorization.class));
+    listSessionFactory.add( new ShadowManagerFactory(AuthorizationManager.class, com.bnymellon.wm.camunda.bpm.engine.authorization.CustomCeepAuthorization.class));
     processEngineConfiguration.setCustomSessionFactories(listSessionFactory);
   }
 
